@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Roulette - Hulu Bet</title>
+  <style>
+    :root {
+      --bg-dark: #0b141e;
+      --bg-surface: #131f2d;
+      --bg-card: #18283a;
+      --border-soft: #23374d;
+      --border-highlight: #3b5575;
+      --green-felt: #008744;
+      --green-accent: #00b159;
+      --green-accent-hover: #00cf68;
+      --roulette-red: #d32027;
+      --roulette-black: #161a1f;
+      --gold: #d4af37;
+      --text-white: #ffffff;
+      --text-muted: #869ab0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #game-app {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark);
+      position: relative;
+      padding-bottom: 28px;
+    }
+
+    /* Top Bar */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #0d1723;
+      border-bottom: 1px solid var(--border-soft);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: #14202e;
+    }
+
+    .balance-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #101a26;
+      border: 1px solid var(--border-soft);
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .br-coin {
+      width: 17px;
+      height: 17px;
+      background: #0288d1;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .btn-deposit {
+      background: #f7a600;
+      color: #0b141e;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .btn-deposit:active { filter: brightness(0.9); }
+
+    /* Subheader bar with Sound toggle and Live Total */
+    .subheader-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .game-logo-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-white);
+      font-weight: 700;
+    }
+    .sound-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+    }
+    .sound-toggle-btn.muted { opacity: 0.4; }
+
+    /* History Ribbon */
+    .history-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      font-size: 11px;
+      color: var(--text-muted);
+      min-height: 30px;
+    }
+    .history-container::-webkit-scrollbar { display: none; }
+    .history-chip {
+      min-width: 22px;
+      height: 20px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .chip-bg-red { background: var(--roulette-red); }
+    .chip-bg-dark { background: #192430; border: 1px solid var(--border-soft); }
+    .chip-bg-green { background: var(--green-accent); }
+
+    /* Realistic Wheel & Stage */
+    .wheel-arena {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 14px;
+    }
+
+    #rouletteCanvas {
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 0 16px rgba(0, 0, 0, 0.9);
+      background: #080d13;
+    }
+
+    /* Zoom / Highlight box on top left of the wheel */
+    .zoom-pocket-card {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      width: 58px;
+      height: 64px;
+      border-radius: 8px;
+      background: rgba(19, 31, 45, 0.85);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      opacity: 0.85;
+    }
+    .zoom-pocket-card.highlight {
+      border-color: var(--green-accent);
+      box-shadow: 0 0 14px rgba(0, 177, 89, 0.5);
+      transform: scale(1.06);
+      opacity: 1;
+    }
+    .zoom-pocket-num {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-muted);
+    }
+    .zoom-pocket-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    /* Undo & Clear Row */
+    .board-tools-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 14px;
+    }
+    .tool-link-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tool-link-btn:active { color: #fff; }
+    .tool-link-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* Roulette Layout Grid */
+    .table-layout-wrap {
+      padding: 4px 12px;
+    }
+
+    .roulette-board {
+      display: grid;
+      grid-template-columns: 34px repeat(12, 1fr) 30px;
+      grid-template-rows: repeat(3, 34px) 26px 26px;
+      gap: 2px;
+      background: #090e15;
+      padding: 4px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .felt-cell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: filter 0.12s;
+    }
+    .felt-cell:active { filter: brightness(1.25); }
+
+    .cell-num-0 {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      background: var(--green-felt);
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .cell-red { background: var(--roulette-red); color: #fff; }
+    .cell-black { background: var(--roulette-black); color: #fff; }
+    .cell-col-label { background: #111a24; color: var(--text-muted); font-size: 10px; }
+
+    .cell-dozen-wrap {
+      background: #141f2b;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .cell-outside-wrap {
+      background: #141f2b;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .cell-color-swatch-red { background: var(--roulette-red); }
+    .cell-color-swatch-black { background: var(--roulette-black); }
+
+    /* Chips visual placed on board */
+    .board-chip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f7a600;
+      color: #0b141e;
+      font-size: 9px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      border: 1.5px dashed rgba(255,255,255,0.7);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Bet button */
+    .bet-bar-container {
+      padding: 10px 12px 6px 12px;
+    }
+
+    .btn-execute-bet {
+      width: 100%;
+      padding: 14px;
+      background: var(--green-accent);
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0, 177, 89, 0.35);
+      transition: background 0.15s;
+    }
+    .btn-execute-bet:hover:not(:disabled) { background: var(--green-accent-hover); }
+    .btn-execute-bet:disabled {
+      background: #192b23;
+      color: #4b6656;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Chip carousel */
+    .chip-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 14px 2px 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .chip-strip-shell {
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 4px 6px;
+    }
+
+    .chip-arrow-btn {
+      background: #14202e;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      border-radius: 4px;
+      width: 24px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .chip-arrow-btn:active { color: #fff; }
+
+    .chip-scroll-tray {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 4px 8px;
+      flex: 1;
+    }
+    .chip-scroll-tray::-webkit-scrollbar { display: none; }
+
+    /* Authentic Striped Casino Chip */
+    .casino-chip {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    }
+    .casino-chip.active {
+      transform: scale(1.14);
+      box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    }
+    .chip-outer-stripes {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px dashed rgba(255,255,255,0.65);
+    }
+    .chip-inner-core {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: #fff;
+      z-index: 2;
+    }
+
+    /* Stake Bar & Modifiers */
+    .stake-control-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+    }
+
+    .stake-input-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111a26;
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+    .stake-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .stake-amount {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .btn-half-double {
+      background: #162434;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 9px 15px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-half-double:hover { color: #fff; border-color: var(--border-highlight); }
+
+    /* Feed Tabs & Table */
+    .feed-tab-row {
+      display: flex;
+      gap: 12px;
+      padding: 14px 14px 6px 14px;
+      border-bottom: 1px solid var(--border-soft);
+      margin-top: 6px;
+    }
+
+    .tab-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding-bottom: 6px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-pill.active {
+      color: #38bdf8;
+      border-bottom-color: #38bdf8;
+    }
+
+    .ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .ledger-table th {
+      text-align: left;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .ledger-table td {
+      padding: 8px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .col-payout-win {
+      color: var(--green-accent);
+      font-weight: 700;
+    }
+
+    /* Error Toast */
+    #hudToast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: #1e293b;
+      border-left: 4px solid var(--roulette-red);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      z-index: 1000;
+      pointer-events: none;
+      max-width: 90%;
+      text-align: center;
+    }
+    #hudToast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Standalone modal */
+    #gateModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 12, 18, 0.96);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 9999;
+    }
+    #gateModal.visible { display: flex; }
+    #gateModal h2 { font-size: 20px; margin-bottom: 8px; }
+    #gateModal p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+    #gateModal button {
+      background: #142436;
+      border: 1px solid var(--border-highlight);
+      color: #38bdf8;
+      font-weight: 800;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-app">
+
+  <!-- Outside Telegram Notice Modal -->
+  <div id="gateModal">
+    <h2>Hulu Bet Official Roulette</h2>
+    <p>Please open this game through the official Hulu Bet Telegram Mini App for authoritative user sessions, real balance sync, and secure payouts.</p>
+    <button onclick="document.getElementById('gateModal').classList.remove('visible');">Continue in Demo View</button>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button class="btn-icon" onclick="postParent({type:'CLOSE_GAME'})">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span>Back</span>
+      </button>
+      <div class="user-avatar">H</div>
+    </div>
+    <div class="nav-right">
+      <div class="balance-badge">
+        <span class="br-coin">Br</span>
+        <span id="uiBalance">0.00</span>
+      </div>
+      <button class="btn-deposit" onclick="openDeposit()">Deposit</button>
+    </div>
+  </header>
+
+  <!-- Subheader with Sound & Game title -->
+  <div class="subheader-bar">
+    <div class="game-logo-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10M12 12 2 12"/></svg>
+      <span>Roulette</span>
+      <button class="sound-toggle-btn" id="soundBtn" onclick="toggleAudio()" title="Sound Toggle">
+        <svg id="soundIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </button>
+    </div>
+    <div style="font-weight: 700; color: #fff;">
+      <span id="headerSubBalance">0.00</span> <span class="br-coin" style="display:inline-flex; width:14px; height:14px; font-size:7px;">Br</span>
+    </div>
+  </div>
+
+  <!-- Winning History Ribbon -->
+  <div class="history-container" id="historyTray">
+    <span style="font-size: 11px;">Recent:</span>
+  </div>
+
+  <!-- Wheel Canvas Simulation Stage -->
+  <div class="wheel-arena">
+    <!-- Top-left Camera Zoom Window -->
+    <div class="zoom-pocket-card" id="zoomPocketCard">
+      <span class="zoom-pocket-num" id="zoomNum">--</span>
+      <span class="zoom-pocket-label" id="zoomColor">Awaiting</span>
+    </div>
+
+    <canvas id="rouletteCanvas" width="540" height="540"></canvas>
+  </div>
+
+  <!-- Board Toolbar: Undo and Clear -->
+  <div class="board-tools-bar">
+    <button class="tool-link-btn" id="undoBtn" onclick="undoBet()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+      Undo
+    </button>
+    <button class="tool-link-btn" id="clearBtn" onclick="clearBets()">
+      Clear
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+    </button>
+  </div>
+
+  <!-- Table Grid Felt -->
+  <div class="table-layout-wrap">
+    <div class="roulette-board" id="boardFelt">
+      <!-- 0 Green Cell -->
+      <div class="felt-cell cell-num-0" data-bet="num-0">0</div>
+      <!-- Generated 1-36 and outside sections -->
+    </div>
+  </div>
+
+  <!-- Primary Green Bet Button -->
+  <div class="bet-bar-container">
+    <button class="btn-execute-bet" id="mainBetBtn" onclick="submitBet()">
+      Bet
+    </button>
+  </div>
+
+  <!-- Chip Selector Carousel -->
+  <div class="chip-meta-row">
+    <span>Chip Value</span>
+    <strong id="activeChipLabel" style="color: #fff;">2.00</strong>
+    <span class="br-coin" style="width:13px; height:13px; font-size:7px;">Br</span>
+  </div>
+
+  <div class="chip-strip-shell">
+    <button class="chip-arrow-btn" onclick="scrollChips(-1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    
+    <div class="chip-scroll-tray" id="chipScrollTray">
+      <div class="casino-chip active" style="background:#2e7d32;" data-val="2">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">2</div>
+      </div>
+      <div class="casino-chip" style="background:#1565c0;" data-val="5">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">5</div>
+      </div>
+      <div class="casino-chip" style="background:#6a1b9a;" data-val="10">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">10</div>
+      </div>
+      <div class="casino-chip" style="background:#ad1457;" data-val="25">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">25</div>
+      </div>
+      <div class="casino-chip" style="background:#ef6c00;" data-val="50">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">50</div>
+      </div>
+      <div class="casino-chip" style="background:#00838f;" data-val="100">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">100</div>
+      </div>
+      <div class="casino-chip" style="background:#4527a0;" data-val="500">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">500</div>
+      </div>
+      <div class="casino-chip" style="background:#c62828;" data-val="1000">
+        <div class="chip-outer-stripes"></div>
+        <div class="chip-inner-core">1k</div>
+      </div>
+    </div>
+
+    <button class="chip-arrow-btn" onclick="scrollChips(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- Total Stake Bar & Modifiers -->
+  <div class="stake-control-strip">
+    <div class="stake-input-box">
+      <span class="stake-title">Total bet</span>
+      <span class="stake-amount" id="totalBetValue">0.00</span>
+    </div>
+    <button class="btn-half-double" onclick="scaleBets(0.5)">/2</button>
+    <button class="btn-half-double" onclick="scaleBets(2.0)">2x</button>
+  </div>
+
+  <!-- Bottom Feeds (Live, My Bets, All Time) -->
+  <div class="feed-tab-row">
+    <div class="tab-pill active" id="tabLive" onclick="selectTab('live')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+      Live
+    </div>
+    <div class="tab-pill" id="tabMyBets" onclick="selectTab('myBets')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M8 6h8M8 10h8M8 14h4"/></svg>
+      My Bets
+    </div>
+    <div class="tab-pill" id="tabAllTime" onclick="selectTab('allTime')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      All Time
+    </div>
+  </div>
+
+  <table class="ledger-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Wager</th>
+        <th>Multiplier</th>
+        <th>Payout</th>
+      </tr>
+    </thead>
+    <tbody id="ledgerBody">
+      <!-- Live dynamic ledger rows -->
+    </tbody>
+  </table>
+
+  <!-- Floating Notification Toast -->
+  <div id="hudToast"></div>
+
+</div>
+
+<script>
+/**
+ * Hulu Bet - Server-Authoritative Roulette Engine
+ * Strictly adhering to HULU_GAMES_SPEC.md:
+ * - Endpoints: POST /api/bet/play, GET /api/user/init
+ * - Full header injection: x-telegram-init-data
+ * - Zero emoji policy.
+ */
+
+// 1. Mandatory Boilerplate
+const API = "https://hulubet-server.onrender.com";
+let INIT_DATA = "";
+let serverBalance = 0;
+let ready = false;
+
+async function api(path, opts = {}) {
+  try {
+    const r = await fetch(API + path, {
+      ...opts,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-telegram-init-data': INIT_DATA
+      }
+    });
+    return await r.json();
+  } catch (e) {
+    return { success: false, message: 'Connection problem' };
+  }
+}
+
+const postParent = m => { try { parent.postMessage(m, '*'); } catch (e) {} };
+
+addEventListener('message', e => {
+  if (e.source !== parent) return;
+  const d = e.data || {};
+  if (d.type === 'INIT' && d.initData) {
+    INIT_DATA = d.initData;
+    ready = true;
+    refreshBalance();
+  }
+  if (d.type === 'UPDATE_BALANCE') refreshBalance();
+});
+
+postParent({ type: 'GAME_READY' });
+
+async function refreshBalance() {
+  const d = await api('/api/user/init');
+  if (d && d.success) {
+    serverBalance = d.balance;
+    showBalance();
+  }
+}
+
+function showBalance() {
+  const formatted = Number(serverBalance).toFixed(2);
+  document.getElementById('uiBalance').innerText = formatted;
+  document.getElementById('headerSubBalance').innerText = formatted;
+  postParent({ type: 'BALANCE_UPDATE', newBalance: serverBalance });
+}
+
+function openDeposit() {
+  postParent({ type: 'OPEN_DEPOSIT' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('hudToast');
+  t.innerText = msg;
+  t.classList.add('visible');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('visible'), 3200);
+}
+
+// 2. Synthesizer Audio Engine (No external sound files required)
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function toggleAudio() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('soundBtn');
+  btn.classList.toggle('muted', !soundEnabled);
+}
+
+function playBallSpinSound() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    // Generate white noise whoosh for marble spinning on track
+    const bufferSize = audioCtx.sampleRate * 1.5;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+    filter.Q.setValueAtTime(3.0, audioCtx.currentTime);
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    noise.start();
+  } catch(e) {}
+}
+
+function playBallBounceSound() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(450 + Math.random() * 150, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  } catch(e) {}
+}
+
+function playChipSound() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.04);
+  } catch(e) {}
+}
+
+function playVictoryChime() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      }, idx * 90);
+    });
+  } catch(e) {}
+}
+
+// 3. European Roulette Data & Dual Physics Wheel Canvas
+const WHEEL_NUMBERS = [
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36,
+  11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9,
+  22, 18, 29, 7, 28, 12, 35, 3, 26
+];
+const RED_SET = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+
+function getNumberMetadata(n) {
+  if (n === 0) return { color: 'green', label: 'Green' };
+  return RED_SET.has(n) ? { color: 'red', label: 'Red' } : { color: 'dark', label: 'Black' };
+}
+
+const canvas = document.getElementById('rouletteCanvas');
+const ctx = canvas.getContext('2d');
+const CANVAS_SIZE = 540;
+const CENTER = CANVAS_SIZE / 2;
+const WHEEL_RADIUS = 250;
+
+let wheelAngle = 0;       // Rotor rotation
+let ballAngle = 0;        // Ball orbit position
+let ballRadius = 215;     // Current distance of ball from center
+let isSpinningRound = false;
+
+// Render Wheel and Ball
+function renderWheelStage() {
+  ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+  // Outer Mahogany Wood Rim
+  ctx.save();
+  const woodGrad = ctx.createRadialGradient(CENTER, CENTER, WHEEL_RADIUS * 0.8, CENTER, CENTER, WHEEL_RADIUS + 16);
+  woodGrad.addColorStop(0, '#1c130d');
+  woodGrad.addColorStop(0.7, '#341f14');
+  woodGrad.addColorStop(1, '#0e0906');
+  ctx.beginPath();
+  ctx.arc(CENTER, CENTER, WHEEL_RADIUS + 14, 0, Math.PI * 2);
+  ctx.fillStyle = woodGrad;
+  ctx.fill();
+
+  // Brass Inlay Border
+  ctx.beginPath();
+  ctx.arc(CENTER, CENTER, WHEEL_RADIUS + 2, 0, Math.PI * 2);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#c5a059';
+  ctx.stroke();
+
+  // Outer Ball Track (Grey/Slate Groove)
+  const trackGrad = ctx.createRadialGradient(CENTER, CENTER, WHEEL_RADIUS * 0.76, CENTER, CENTER, WHEEL_RADIUS);
+  trackGrad.addColorStop(0, '#111721');
+  trackGrad.addColorStop(1, '#080d12');
+  ctx.beginPath();
+  ctx.arc(CENTER, CENTER, WHEEL_RADIUS, 0, Math.PI * 2);
+  ctx.fillStyle = trackGrad;
+  ctx.fill();
+
+  const totalPockets = WHEEL_NUMBERS.length;
+  const sliceRadian = (Math.PI * 2) / totalPockets;
+
+  // Render Rotor Pockets
+  for (let i = 0; i < totalPockets; i++) {
+    const num = WHEEL_NUMBERS[i];
+    const startA = wheelAngle + (i * sliceRadian) - (sliceRadian / 2);
+    const endA = startA + sliceRadian;
+
+    ctx.beginPath();
+    ctx.moveTo(CENTER, CENTER);
+    ctx.arc(CENTER, CENTER, WHEEL_RADIUS * 0.78, startA, endA);
+    ctx.closePath();
+
+    if (num === 0) ctx.fillStyle = '#008744';
+    else if (RED_SET.has(num)) ctx.fillStyle = '#d32027';
+    else ctx.fillStyle = '#14181f';
+    ctx.fill();
+
+    // Pocket Fret Divider
+    ctx.beginPath();
+    ctx.moveTo(CENTER + Math.cos(startA) * (WHEEL_RADIUS * 0.52), CENTER + Math.sin(startA) * (WHEEL_RADIUS * 0.52));
+    ctx.lineTo(CENTER + Math.cos(startA) * (WHEEL_RADIUS * 0.78), CENTER + Math.sin(startA) * (WHEEL_RADIUS * 0.78));
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#cfb078';
+    ctx.stroke();
+
+    // Pocket Digit Text
+    ctx.save();
+    ctx.translate(CENTER, CENTER);
+    ctx.rotate(startA + sliceRadian / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 16px -apple-system, sans-serif';
+    ctx.fillText(num.toString(), WHEEL_RADIUS * 0.74, 5);
+    ctx.restore();
+  }
+
+  // Inner Metallic Bowl Ring
+  const bowlGrad = ctx.createRadialGradient(CENTER, CENTER, 20, CENTER, CENTER, WHEEL_RADIUS * 0.52);
+  bowlGrad.addColorStop(0, '#3a4a5e');
+  bowlGrad.addColorStop(0.7, '#1b2430');
+  bowlGrad.addColorStop(1, '#0e141c');
+  ctx.beginPath();
+  ctx.arc(CENTER, CENTER, WHEEL_RADIUS * 0.52, 0, Math.PI * 2);
+  ctx.fillStyle = bowlGrad;
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#d4af37';
+  ctx.stroke();
+
+  // Brass Central Cone Turret & Handles
+  ctx.beginPath();
+  ctx.arc(CENTER, CENTER, 24, 0, Math.PI * 2);
+  ctx.fillStyle = '#e6b843';
+  ctx.fill();
+  ctx.strokeStyle = '#996e13';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  for (let s = 0; s < 4; s++) {
+    const handleAngle = wheelAngle + (s * Math.PI / 2);
+    const tipX = CENTER + Math.cos(handleAngle) * 58;
+    const tipY = CENTER + Math.sin(handleAngle) * 58;
+
+    ctx.beginPath();
+    ctx.moveTo(CENTER, CENTER);
+    ctx.lineTo(tipX, tipY);
+    ctx.strokeStyle = '#e6b843';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 7, 0, Math.PI * 2);
+    ctx.fillStyle = '#fce295';
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // Render Ivory Ball with 3D drop shadow
+  if (ballRadius > 0) {
+    const bx = CENTER + Math.cos(ballAngle) * ballRadius;
+    const by = CENTER + Math.sin(ballAngle) * ballRadius;
+
+    // Ball Drop Shadow
+    ctx.beginPath();
+    ctx.arc(bx + 2, by + 3, 7, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.fill();
+
+    // Ball Body
+    const ballGrad = ctx.createRadialGradient(bx - 2, by - 2, 1, bx, by, 7);
+    ballGrad.addColorStop(0, '#ffffff');
+    ballGrad.addColorStop(0.8, '#e0e0e0');
+    ballGrad.addColorStop(1, '#9e9e9e');
+    ctx.beginPath();
+    ctx.arc(bx, by, 6.5, 0, Math.PI * 2);
+    ctx.fillStyle = ballGrad;
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+renderWheelStage();
+
+// Idle Rotor Movement when resting
+function idleTick() {
+  if (!isSpinningRound) {
+    wheelAngle += 0.002;
+    renderWheelStage();
+  }
+  requestAnimationFrame(idleTick);
+}
+requestAnimationFrame(idleTick);
+
+// Realistic Spin Animation to Server Pocket
+function executeSpinPhysics(targetNumber, callback) {
+  isSpinningRound = true;
+  const targetIndex = WHEEL_NUMBERS.indexOf(targetNumber);
+  const sliceRadian = (Math.PI * 2) / WHEEL_NUMBERS.length;
+
+  playBallSpinSound();
+
+  // Reset Zoom Card state
+  const zoomCard = document.getElementById('zoomPocketCard');
+  zoomCard.classList.remove('highlight');
+  document.getElementById('zoomNum').innerText = '--';
+  document.getElementById('zoomColor').innerText = 'Spinning';
+
+  const startTime = performance.now();
+  const totalDuration = 4800; // milliseconds
+  const startWheelAngle = wheelAngle;
+  const wheelDelta = Math.PI * 2 * 3; // 3 full rotor rotations
+
+  // Target Pocket angle aligns with top (or settled ball position)
+  // Let the settled ball rest at top = -Math.PI / 2
+  const finalRotorTarget = -(Math.PI / 2) - (targetIndex * sliceRadian);
+  const finalWheelAngle = startWheelAngle + wheelDelta + ((finalRotorTarget - ((startWheelAngle + wheelDelta) % (Math.PI * 2))) % (Math.PI * 2));
+
+  // Ball orbits in opposite direction
+  const ballStartAngle = ballAngle;
+  const ballTotalRotations = -(Math.PI * 2 * 6); // 6 counter-clockwise rotations
+  let lastBounceTime = 0;
+
+  function easeOutQuad(t) { return t * (2 - t); }
+  function easeOutCubic(t) { return (--t) * t * t + 1; }
+
+  function frame(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / totalDuration, 1);
+
+    // Rotor decelerates gently
+    wheelAngle = startWheelAngle + (finalWheelAngle - startWheelAngle) * easeOutCubic(progress);
+
+    if (progress < 0.65) {
+      // Phase 1: Ball travels around the outer track fast
+      const p1 = progress / 0.65;
+      ballAngle = ballStartAngle + ballTotalRotations * easeOutQuad(p1);
+      ballRadius = 212; // Outer track
+    } else if (progress < 0.88) {
+      // Phase 2: Ball drops from track into pocket ring & bounces
+      const p2 = (progress - 0.65) / 0.23;
+      ballRadius = 212 - (212 - 162) * easeOutQuad(p2);
+      const pocketAngle = wheelAngle + (targetIndex * sliceRadian);
+      ballAngle = pocketAngle + (1 - p2) * 1.5;
+
+      if (now - lastBounceTime > 120) {
+        playBallBounceSound();
+        lastBounceTime = now;
+      }
+    } else {
+      // Phase 3: Ball locks into the exact pocket fret and rides with rotor
+      ballRadius = 162;
+      ballAngle = wheelAngle + (targetIndex * sliceRadian);
+    }
+
+    renderWheelStage();
+
+    if (progress < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      isSpinningRound = false;
+      playBallBounceSound();
+      callback();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// 4. Interactive Board Grid Generation
+let selectedChipValue = 2;
+let activeBetsMap = new Map(); // betKey -> amount
+let betHistoryList = [];
+
+function buildBoardGrid() {
+  const board = document.getElementById('boardFelt');
+
+  // Columns 1 to 12
+  for (let r = 0; r < 3; r++) {
+    for (let c = 1; c <= 12; c++) {
+      const num = (3 - r) + (c - 1) * 3;
+      const meta = getNumberMetadata(num);
+
+      const cell = document.createElement('div');
+      cell.className = `felt-cell cell-${meta.color === 'red' ? 'red' : 'black'}`;
+      cell.style.gridColumn = c + 1;
+      cell.style.gridRow = r + 1;
+      cell.dataset.bet = `num-${num}`;
+      cell.innerText = num;
+      cell.addEventListener('click', () => onGridCellSelected(`num-${num}`, cell));
+      board.appendChild(cell);
+    }
+
+    // 2:1 column markers
+    const colCell = document.createElement('div');
+    colCell.className = 'felt-cell cell-col-label';
+    colCell.style.gridColumn = 14;
+    colCell.style.gridRow = r + 1;
+    colCell.dataset.bet = `col-${3 - r}`;
+    colCell.innerText = '2:1';
+    colCell.addEventListener('click', () => onGridCellSelected(`col-${3 - r}`, colCell));
+    board.appendChild(colCell);
+  }
+
+  // Hook 0 Cell
+  const zeroCell = board.querySelector('[data-bet="num-0"]');
+  zeroCell.addEventListener('click', () => onGridCellSelected('num-0', zeroCell));
+
+  // Dozen Row
+  const dozenConfig = [
+    { text: '1 to 12', key: 'dozen-1', col: '2 / span 4' },
+    { text: '13 to 24', key: 'dozen-2', col: '6 / span 4' },
+    { text: '25 to 36', key: 'dozen-3', col: '10 / span 4' }
+  ];
+  dozenConfig.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'felt-cell cell-dozen-wrap';
+    el.style.gridColumn = d.col;
+    el.style.gridRow = '4';
+    el.dataset.bet = d.key;
+    el.innerText = d.text;
+    el.addEventListener('click', () => onGridCellSelected(d.key, el));
+    board.appendChild(el);
+  });
+
+  // Outside Bets Row
+  const outsideConfig = [
+    { text: '1 to 18', key: 'low', col: '2 / span 2' },
+    { text: 'Even', key: 'even', col: '4 / span 2' },
+    { text: '', key: 'red', col: '6 / span 2', customClass: 'cell-color-swatch-red' },
+    { text: '', key: 'black', col: '8 / span 2', customClass: 'cell-color-swatch-black' },
+    { text: 'Odd', key: 'odd', col: '10 / span 2' },
+    { text: '19 to 36', key: 'high', col: '12 / span 2' }
+  ];
+  outsideConfig.forEach(o => {
+    const el = document.createElement('div');
+    el.className = `felt-cell cell-outside-wrap ${o.customClass || ''}`;
+    el.style.gridColumn = o.col;
+    el.style.gridRow = '5';
+    el.dataset.bet = o.key;
+    el.innerText = o.text;
+    el.addEventListener('click', () => onGridCellSelected(o.key, el));
+    board.appendChild(el);
+  });
+}
+
+function onGridCellSelected(key, domEl) {
+  if (isSpinningRound) return;
+  const currentTotal = activeBetsMap.get(key) || 0;
+  const proposedTotal = computeTotalWager();
+
+  if (proposedTotal + selectedChipValue > 1000) {
+    showToast("Maximum total bet is 1000 ETB");
+    return;
+  }
+
+  activeBetsMap.set(key, currentTotal + selectedChipValue);
+  betHistoryList.push({ key, amount: selectedChipValue, domEl });
+
+  playChipSound();
+  refreshCellBadge(key, domEl);
+  syncStakeUI();
+}
+
+function refreshCellBadge(key, domEl) {
+  let badge = domEl.querySelector('.board-chip');
+  const stake = activeBetsMap.get(key) || 0;
+  if (stake > 0) {
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.className = 'board-chip';
+      domEl.appendChild(badge);
+    }
+    badge.innerText = stake >= 1000 ? '1k' : stake;
+  } else if (badge) {
+    badge.remove();
+  }
+}
+
+function undoBet() {
+  if (isSpinningRound || betHistoryList.length === 0) return;
+  const item = betHistoryList.pop();
+  const current = activeBetsMap.get(item.key) || 0;
+  const nextVal = current - item.amount;
+
+  if (nextVal <= 0) activeBetsMap.delete(item.key);
+  else activeBetsMap.set(item.key, nextVal);
+
+  refreshCellBadge(item.key, item.domEl);
+  syncStakeUI();
+  playChipSound();
+}
+
+function clearBets() {
+  if (isSpinningRound) return;
+  activeBetsMap.clear();
+  betHistoryList = [];
+  document.querySelectorAll('.board-chip').forEach(b => b.remove());
+  syncStakeUI();
+}
+
+function scaleBets(factor) {
+  if (isSpinningRound || activeBetsMap.size === 0) return;
+  let newMap = new Map();
+  let totalSum = 0;
+
+  for (let [k, v] of activeBetsMap.entries()) {
+    let scaled = Math.max(1, Math.round(v * factor));
+    newMap.set(k, scaled);
+    totalSum += scaled;
+  }
+
+  if (totalSum > 1000) {
+    showToast("Exceeds max allowed bet of 1000 ETB");
+    return;
+  }
+
+  activeBetsMap = newMap;
+  activeBetsMap.forEach((amt, key) => {
+    const el = document.querySelector(`[data-bet="${key}"]`);
+    if (el) refreshCellBadge(key, el);
+  });
+  syncStakeUI();
+}
+
+function computeTotalWager() {
+  let sum = 0;
+  for (let v of activeBetsMap.values()) sum += v;
+  return sum;
+}
+
+function syncStakeUI() {
+  const total = computeTotalWager();
+  document.getElementById('totalBetValue').innerText = total.toFixed(2);
+  const btn = document.getElementById('mainBetBtn');
+  if (total <= 0) {
+    btn.disabled = true;
+    btn.innerText = 'Bet';
+  } else {
+    btn.disabled = isSpinningRound;
+    btn.innerText = `Bet (${total.toFixed(2)} Br)`;
+  }
+}
+
+// 5. Chip Carousel Scroll & Click Logic
+document.querySelectorAll('.casino-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.casino-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedChipValue = Number(chip.dataset.val);
+    document.getElementById('activeChipLabel').innerText = selectedChipValue.toFixed(2);
+    playChipSound();
+  });
+});
+
+function scrollChips(dir) {
+  const tray = document.getElementById('chipScrollTray');
+  tray.scrollBy({ left: dir * 90, behavior: 'smooth' });
+}
+
+// 6. Authoritative Bet Execution
+async function submitBet() {
+  const totalStake = computeTotalWager();
+  if (totalStake < 1) {
+    showToast("Minimum bet is 1 ETB");
+    return;
+  }
+  if (totalStake > 1000) {
+    showToast("Maximum bet is 1000 ETB");
+    return;
+  }
+  if (serverBalance < totalStake) {
+    showToast("Insufficient balance");
+    openDeposit();
+    return;
+  }
+
+  const btn = document.getElementById('mainBetBtn');
+  btn.disabled = true;
+  postParent({ type: 'BET_STARTED' });
+
+  // Prepare payload
+  const formattedBets = [];
+  activeBetsMap.forEach((amt, key) => {
+    formattedBets.push({ type: key, amount: amt });
+  });
+
+  const res = await api('/api/bet/play', {
+    method: 'POST',
+    body: JSON.stringify({
+      gameName: "Roulette",
+      betAmount: totalStake,
+      clientData: { bets: formattedBets }
+    })
+  });
+
+  if (!res || !res.success) {
+    btn.disabled = false;
+    postParent({ type: 'BET_ENDED' });
+    showToast(res.message || "Failed to place bet");
+    return;
+  }
+
+  // The server decides outcome
+  const outcomeNum = (res.visualOutcome && typeof res.visualOutcome.winningNumber === 'number')
+    ? res.visualOutcome.winningNumber
+    : (res.visualOutcome && typeof res.visualOutcome.number === 'number' ? res.visualOutcome.number : 0);
+
+  // Execute deceleration physics
+  executeSpinPhysics(outcomeNum, () => {
+    // Settled
+    serverBalance = res.newBalance;
+    showBalance();
+
+    // Zoom highlight on the top left camera box
+    const zoomCard = document.getElementById('zoomPocketCard');
+    const zoomNum = document.getElementById('zoomNum');
+    const zoomColor = document.getElementById('zoomColor');
+
+    zoomCard.classList.add('highlight');
+    zoomNum.innerText = outcomeNum;
+    const meta = getNumberMetadata(outcomeNum);
+    zoomColor.innerText = meta.label;
+    zoomNum.style.color = meta.color === 'green' ? 'var(--green-accent)' : (meta.color === 'red' ? 'var(--roulette-red)' : '#fff');
+
+    if (res.isWin && res.payout > 0) {
+      playVictoryChime();
+      showToast(`Won +${res.payout.toFixed(2)} Br!`);
+    }
+
+    addHistoryBadge(outcomeNum, meta.color);
+    addLedgerRow("You", totalStake, res.multiplier, res.payout, res.isWin);
+
+    postParent({ type: 'BET_ENDED' });
+    btn.disabled = false;
+    syncStakeUI();
+  });
+}
+
+// 7. History Ribbon & Ledger Feed
+function addHistoryBadge(num, color) {
+  const tray = document.getElementById('historyTray');
+  const chip = document.createElement('div');
+  chip.className = `history-chip chip-bg-${color}`;
+  chip.innerText = num;
+  tray.insertBefore(chip, tray.children[1] || null);
+}
+
+function addLedgerRow(user, wager, mult, payout, isWin) {
+  const tbody = document.getElementById('ledgerBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${user}</td>
+    <td>${Number(wager).toFixed(1)} <span class="br-coin" style="display:inline-flex; width:11px; height:11px; font-size:6px;">Br</span></td>
+    <td>${(mult || 0).toFixed(2)} x</td>
+    <td class="${isWin ? 'col-payout-win' : ''}">${Number(payout).toFixed(2)} <span class="br-coin" style="display:inline-flex; width:11px; height:11px; font-size:6px;">Br</span></td>
+  `;
+  tbody.insertBefore(tr, tbody.firstChild);
+}
+
+// Tab Switching
+function selectTab(tab) {
+  document.getElementById('tabLive').classList.toggle('active', tab === 'live');
+  document.getElementById('tabMyBets').classList.toggle('active', tab === 'myBets');
+  document.getElementById('tabAllTime').classList.toggle('active', tab === 'allTime');
+}
+
+// Seed mock live activity (for atmosphere matching screenshot)
+function seedInitialFeed() {
+  const users = ['w***d', 'w***d', 'u***a', 'u***a', 'u***a', 'p***f', 'u***k', 'p***f'];
+  const wagers = [25.0, 25.0, 5.0, 10.0, 10.0, 5.0, 2.0, 5.0];
+  const mults = [2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 36.00, 2.00];
+  const payouts = [50.0, 50.0, 10.0, 20.0, 20.0, 10.0, 72.0, 10.0];
+
+  for (let i = 0; i < users.length; i++) {
+    addLedgerRow(users[i], wagers[i], mults[i], payouts[i], true);
+  }
+}
+
+// Lifecycle Init
+window.addEventListener('DOMContentLoaded', () => {
+  buildBoardGrid();
+  syncStakeUI();
+  seedInitialFeed();
+
+  // Show Gate modal if opened outside Telegram iframe
+  if (window.self === window.top) {
+    document.getElementById('gateModal').classList.add('visible');
+  }
+});
+</script>
+</body>
+</html>
