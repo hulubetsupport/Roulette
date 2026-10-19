@@ -15,7 +15,7 @@
       --green-accent: #00b159;
       --green-accent-hover: #00cf68;
       --roulette-red: #d32027;
-      --roulette-black: #161a1f;
+      --roulette-black: #14171d;
       --gold: #d4af37;
       --text-white: #ffffff;
       --text-muted: #869ab0;
@@ -50,7 +50,7 @@
       padding-bottom: 28px;
     }
 
-    /* Top Bar */
+    /* Top Bar - Back Button Removed */
     .top-nav {
       display: flex;
       align-items: center;
@@ -69,22 +69,9 @@
       gap: 10px;
     }
 
-    .btn-icon {
-      background: none;
-      border: none;
-      color: var(--text-white);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 4px;
-    }
-
     .user-avatar {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: 1px solid var(--border-soft);
       display: flex;
@@ -102,11 +89,22 @@
       gap: 6px;
       background: #101a26;
       border: 1px solid var(--border-soft);
-      padding: 4px 8px;
+      padding: 5px 10px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 800;
     }
+
+    .balance-eye-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0 2px;
+    }
+    .balance-eye-btn:hover { color: #fff; }
 
     .br-coin {
       width: 17px;
@@ -121,6 +119,7 @@
       justify-content: center;
       text-transform: uppercase;
       letter-spacing: -0.5px;
+      flex-shrink: 0;
     }
 
     .btn-deposit {
@@ -128,7 +127,7 @@
       color: #0b141e;
       border: none;
       border-radius: 4px;
-      padding: 6px 11px;
+      padding: 6px 12px;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
@@ -162,7 +161,7 @@
       align-items: center;
       padding: 2px;
     }
-    .sound-toggle-btn.muted { opacity: 0.4; }
+    .sound-toggle-btn.muted { opacity: 0.35; }
 
     /* History Ribbon */
     .history-container {
@@ -174,13 +173,13 @@
       scrollbar-width: none;
       font-size: 11px;
       color: var(--text-muted);
-      min-height: 30px;
+      min-height: 32px;
     }
     .history-container::-webkit-scrollbar { display: none; }
     .history-chip {
-      min-width: 22px;
-      height: 20px;
-      padding: 0 4px;
+      min-width: 24px;
+      height: 22px;
+      padding: 0 5px;
       border-radius: 4px;
       font-weight: 800;
       font-size: 11px;
@@ -188,6 +187,11 @@
       align-items: center;
       justify-content: center;
       color: #fff;
+      animation: popIn 0.25s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
     .chip-bg-red { background: var(--roulette-red); }
     .chip-bg-dark { background: #192430; border: 1px solid var(--border-soft); }
@@ -199,49 +203,51 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px 14px;
+      padding: 10px 14px 6px 14px;
     }
 
     #rouletteCanvas {
-      width: 270px;
-      height: 270px;
+      width: 275px;
+      height: 275px;
       border-radius: 50%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 0 16px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.8), inset 0 0 18px rgba(0, 0, 0, 0.95);
       background: #080d13;
     }
 
-    /* Zoom / Highlight box on top left of the wheel */
+    /* Top-left Camera Zoom Window */
     .zoom-pocket-card {
       position: absolute;
       top: 14px;
-      left: 16px;
-      width: 58px;
-      height: 64px;
+      left: 18px;
+      width: 62px;
+      height: 68px;
       border-radius: 8px;
-      background: rgba(19, 31, 45, 0.85);
+      background: rgba(17, 28, 41, 0.88);
       border: 1px solid var(--border-soft);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      opacity: 0.85;
+      opacity: 0.9;
+      z-index: 5;
     }
     .zoom-pocket-card.highlight {
       border-color: var(--green-accent);
-      box-shadow: 0 0 14px rgba(0, 177, 89, 0.5);
-      transform: scale(1.06);
+      box-shadow: 0 0 16px rgba(0, 177, 89, 0.65);
+      transform: scale(1.08);
       opacity: 1;
     }
     .zoom-pocket-num {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--text-muted);
+      line-height: 1.1;
     }
     .zoom-pocket-label {
       font-size: 9px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-muted);
@@ -252,7 +258,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 14px;
+      padding: 6px 14px 4px 14px;
     }
     .tool-link-btn {
       background: none;
@@ -263,14 +269,14 @@
       align-items: center;
       gap: 5px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
     }
     .tool-link-btn:active { color: #fff; }
     .tool-link-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     /* Roulette Layout Grid */
     .table-layout-wrap {
-      padding: 4px 12px;
+      padding: 2px 12px;
     }
 
     .roulette-board {
@@ -293,9 +299,16 @@
       font-weight: 800;
       cursor: pointer;
       border-radius: 3px;
-      transition: filter 0.12s;
+      transition: filter 0.12s, box-shadow 0.2s;
     }
     .felt-cell:active { filter: brightness(1.25); }
+
+    /* Winning Flash Highlights on Table */
+    .felt-cell.win-flash {
+      box-shadow: inset 0 0 10px #ffe066, 0 0 12px #ffe066;
+      border: 1.5px solid #fff;
+      z-index: 10;
+    }
 
     .cell-num-0 {
       grid-column: 1;
@@ -342,10 +355,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.8);
-      border: 1.5px dashed rgba(255,255,255,0.7);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.85);
+      border: 1.5px dashed rgba(255,255,255,0.75);
       pointer-events: none;
-      z-index: 10;
+      z-index: 15;
     }
 
     /* Bet button */
@@ -368,8 +381,9 @@
       justify-content: center;
       gap: 6px;
       box-shadow: 0 4px 14px rgba(0, 177, 89, 0.35);
-      transition: background 0.15s;
+      transition: background 0.15s, transform 0.08s;
     }
+    .btn-execute-bet:active:not(:disabled) { transform: scale(0.99); }
     .btn-execute-bet:hover:not(:disabled) { background: var(--green-accent-hover); }
     .btn-execute-bet:disabled {
       background: #192b23;
@@ -612,19 +626,18 @@
     <button onclick="document.getElementById('gateModal').classList.remove('visible');">Continue in Demo View</button>
   </div>
 
-  <!-- Top Navigation Header -->
+  <!-- Top Navigation Header (Back Button Removed) -->
   <header class="top-nav">
     <div class="nav-left">
-      <button class="btn-icon" onclick="postParent({type:'CLOSE_GAME'})">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        <span>Back</span>
-      </button>
       <div class="user-avatar">H</div>
     </div>
     <div class="nav-right">
       <div class="balance-badge">
         <span class="br-coin">Br</span>
         <span id="uiBalance">0.00</span>
+        <button class="balance-eye-btn" onclick="toggleBalancePrivacy()" title="Toggle Privacy">
+          <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <button class="btn-deposit" onclick="openDeposit()">Deposit</button>
     </div>
@@ -799,6 +812,8 @@ const API = "https://hulubet-server.onrender.com";
 let INIT_DATA = "";
 let serverBalance = 0;
 let ready = false;
+let USER_ID = "";
+let hideBalance = false;
 
 async function api(path, opts = {}) {
   try {
@@ -822,8 +837,11 @@ addEventListener('message', e => {
   const d = e.data || {};
   if (d.type === 'INIT' && d.initData) {
     INIT_DATA = d.initData;
+    USER_ID = String(d.userId || '');
     ready = true;
+    loadMyHistory();
     refreshBalance();
+    loadLiveFeed();
   }
   if (d.type === 'UPDATE_BALANCE') refreshBalance();
 });
@@ -839,10 +857,18 @@ async function refreshBalance() {
 }
 
 function showBalance() {
-  const formatted = Number(serverBalance).toFixed(2);
+  const formatted = hideBalance ? '••••••' : Number(serverBalance).toFixed(2);
   document.getElementById('uiBalance').innerText = formatted;
   document.getElementById('headerSubBalance').innerText = formatted;
   postParent({ type: 'BALANCE_UPDATE', newBalance: serverBalance });
+}
+
+function toggleBalancePrivacy() {
+  hideBalance = !hideBalance;
+  document.getElementById('eyeIcon').innerHTML = hideBalance
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  showBalance();
 }
 
 function openDeposit() {
@@ -857,17 +883,13 @@ function showToast(msg) {
   t._timer = setTimeout(() => t.classList.remove('visible'), 3200);
 }
 
-// 2. Synthesizer Audio Engine (No external sound files required)
+// 2. Synthesizer Audio Engine (Pure Web Audio API)
 let audioCtx = null;
 let soundEnabled = true;
 
 function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function toggleAudio() {
@@ -880,8 +902,7 @@ function playBallSpinSound() {
   if (!soundEnabled) return;
   initAudio();
   try {
-    // Generate white noise whoosh for marble spinning on track
-    const bufferSize = audioCtx.sampleRate * 1.5;
+    const bufferSize = audioCtx.sampleRate * 1.8;
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -891,17 +912,34 @@ function playBallSpinSound() {
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, audioCtx.currentTime);
-    filter.Q.setValueAtTime(3.0, audioCtx.currentTime);
+    filter.frequency.setValueAtTime(850, audioCtx.currentTime);
+    filter.Q.setValueAtTime(3.5, audioCtx.currentTime);
 
     const gain = audioCtx.createGain();
-    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+    gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.7);
 
     noise.connect(filter);
     filter.connect(gain);
     gain.connect(audioCtx.destination);
     noise.start();
+  } catch(e) {}
+}
+
+function playDeflectorPinSound() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1400 + Math.random() * 300, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.04);
   } catch(e) {}
 }
 
@@ -912,13 +950,13 @@ function playBallBounceSound() {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(450 + Math.random() * 150, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+    osc.frequency.setValueAtTime(400 + Math.random() * 120, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.14, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.05);
+    osc.stop(audioCtx.currentTime + 0.045);
   } catch(e) {}
 }
 
@@ -929,7 +967,7 @@ function playChipSound() {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(820 + Math.random() * 80, audioCtx.currentTime);
     gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
     osc.connect(gain);
@@ -982,10 +1020,10 @@ const WHEEL_RADIUS = 250;
 
 let wheelAngle = 0;       // Rotor rotation
 let ballAngle = 0;        // Ball orbit position
-let ballRadius = 215;     // Current distance of ball from center
+let ballRadius = 214;     // Current distance of ball from center
 let isSpinningRound = false;
 
-// Render Wheel and Ball
+// Render Wheel, 8 Brass Deflector Pins, Pockets, and Ivory Ball
 function renderWheelStage() {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
@@ -1015,6 +1053,29 @@ function renderWheelStage() {
   ctx.arc(CENTER, CENTER, WHEEL_RADIUS, 0, Math.PI * 2);
   ctx.fillStyle = trackGrad;
   ctx.fill();
+
+  // 8 Diamond Brass Deflector Pins (Canoes) on the ball track
+  for (let p = 0; p < 8; p++) {
+    const pinAngle = (p * Math.PI / 4) + (Math.PI / 8);
+    const px = CENTER + Math.cos(pinAngle) * (WHEEL_RADIUS * 0.88);
+    const py = CENTER + Math.sin(pinAngle) * (WHEEL_RADIUS * 0.88);
+
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(pinAngle);
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(2.5, 0);
+    ctx.lineTo(0, 6);
+    ctx.lineTo(-2.5, 0);
+    ctx.closePath();
+    ctx.fillStyle = '#fce295';
+    ctx.fill();
+    ctx.strokeStyle = '#8a6518';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
 
   const totalPockets = WHEEL_NUMBERS.length;
   const sliceRadian = (Math.PI * 2) / totalPockets;
@@ -1132,7 +1193,7 @@ function idleTick() {
 }
 requestAnimationFrame(idleTick);
 
-// Realistic Spin Animation to Server Pocket
+// Realistic Spin Animation to Server Pocket with Multi-Hop Fret Bouncing
 function executeSpinPhysics(targetNumber, callback) {
   isSpinningRound = true;
   const targetIndex = WHEEL_NUMBERS.indexOf(targetNumber);
@@ -1147,19 +1208,17 @@ function executeSpinPhysics(targetNumber, callback) {
   document.getElementById('zoomColor').innerText = 'Spinning';
 
   const startTime = performance.now();
-  const totalDuration = 4800; // milliseconds
+  const totalDuration = 4900; // milliseconds
   const startWheelAngle = wheelAngle;
   const wheelDelta = Math.PI * 2 * 3; // 3 full rotor rotations
 
-  // Target Pocket angle aligns with top (or settled ball position)
-  // Let the settled ball rest at top = -Math.PI / 2
   const finalRotorTarget = -(Math.PI / 2) - (targetIndex * sliceRadian);
   const finalWheelAngle = startWheelAngle + wheelDelta + ((finalRotorTarget - ((startWheelAngle + wheelDelta) % (Math.PI * 2))) % (Math.PI * 2));
 
-  // Ball orbits in opposite direction
   const ballStartAngle = ballAngle;
-  const ballTotalRotations = -(Math.PI * 2 * 6); // 6 counter-clockwise rotations
+  const ballTotalRotations = -(Math.PI * 2 * 6);
   let lastBounceTime = 0;
+  let deflectorHitDone = false;
 
   function easeOutQuad(t) { return t * (2 - t); }
   function easeOutCubic(t) { return (--t) * t * t + 1; }
@@ -1168,27 +1227,35 @@ function executeSpinPhysics(targetNumber, callback) {
     const elapsed = now - startTime;
     const progress = Math.min(elapsed / totalDuration, 1);
 
-    // Rotor decelerates gently
     wheelAngle = startWheelAngle + (finalWheelAngle - startWheelAngle) * easeOutCubic(progress);
 
-    if (progress < 0.65) {
-      // Phase 1: Ball travels around the outer track fast
-      const p1 = progress / 0.65;
+    if (progress < 0.62) {
+      // Phase 1: Ball speeds on outer groove
+      const p1 = progress / 0.62;
       ballAngle = ballStartAngle + ballTotalRotations * easeOutQuad(p1);
-      ballRadius = 212; // Outer track
+      ballRadius = 214;
     } else if (progress < 0.88) {
-      // Phase 2: Ball drops from track into pocket ring & bounces
-      const p2 = (progress - 0.65) / 0.23;
-      ballRadius = 212 - (212 - 162) * easeOutQuad(p2);
-      const pocketAngle = wheelAngle + (targetIndex * sliceRadian);
-      ballAngle = pocketAngle + (1 - p2) * 1.5;
+      // Phase 2: Hits deflectors & rattles into pocket cone
+      if (!deflectorHitDone && progress > 0.64) {
+        playDeflectorPinSound();
+        deflectorHitDone = true;
+      }
 
-      if (now - lastBounceTime > 120) {
+      const p2 = (progress - 0.62) / 0.26;
+      ballRadius = 214 - (214 - 162) * easeOutQuad(p2);
+      const targetPocketAngle = wheelAngle + (targetIndex * sliceRadian);
+
+      // Micro hops over frets
+      const hops = Math.sin(p2 * Math.PI * 4) * (1 - p2) * 12;
+      ballRadius += hops;
+      ballAngle = targetPocketAngle + (1 - p2) * 1.6;
+
+      if (now - lastBounceTime > 110) {
         playBallBounceSound();
         lastBounceTime = now;
       }
     } else {
-      // Phase 3: Ball locks into the exact pocket fret and rides with rotor
+      // Phase 3: Settled permanently into the exact fret pocket
       ballRadius = 162;
       ballAngle = wheelAngle + (targetIndex * sliceRadian);
     }
@@ -1207,9 +1274,9 @@ function executeSpinPhysics(targetNumber, callback) {
   requestAnimationFrame(frame);
 }
 
-// 4. Interactive Board Grid Generation
+// 4. Interactive Board Grid Generation & Winning Highlights
 let selectedChipValue = 2;
-let activeBetsMap = new Map(); // betKey -> amount
+let activeBetsMap = new Map();
 let betHistoryList = [];
 
 function buildBoardGrid() {
@@ -1382,6 +1449,35 @@ function syncStakeUI() {
   }
 }
 
+// Highlight winning sectors on the table felt
+function flashWinningBets(num) {
+  document.querySelectorAll('.felt-cell').forEach(c => c.classList.remove('win-flash'));
+  const meta = getNumberMetadata(num);
+  const winningKeys = new Set([`num-${num}`]);
+
+  if (num > 0) {
+    winningKeys.add(meta.color);
+    winningKeys.add(num % 2 === 0 ? 'even' : 'odd');
+    winningKeys.add(num <= 18 ? 'low' : 'high');
+    
+    if (num <= 12) winningKeys.add('dozen-1');
+    else if (num <= 24) winningKeys.add('dozen-2');
+    else winningKeys.add('dozen-3');
+
+    const col = num % 3 === 1 ? 1 : (num % 3 === 2 ? 2 : 3);
+    winningKeys.add(`col-${col}`);
+  }
+
+  winningKeys.forEach(key => {
+    const cell = document.querySelector(`[data-bet="${key}"]`);
+    if (cell) cell.classList.add('win-flash');
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.felt-cell').forEach(c => c.classList.remove('win-flash'));
+  }, 4000);
+}
+
 // 5. Chip Carousel Scroll & Click Logic
 document.querySelectorAll('.casino-chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -1448,7 +1544,6 @@ async function submitBet() {
 
   // Execute deceleration physics
   executeSpinPhysics(outcomeNum, () => {
-    // Settled
     serverBalance = res.newBalance;
     showBalance();
 
@@ -1462,6 +1557,9 @@ async function submitBet() {
     const meta = getNumberMetadata(outcomeNum);
     zoomColor.innerText = meta.label;
     zoomNum.style.color = meta.color === 'green' ? 'var(--green-accent)' : (meta.color === 'red' ? 'var(--roulette-red)' : '#fff');
+
+    // Table Felt Winning Highlights
+    flashWinningBets(outcomeNum);
 
     if (res.isWin && res.payout > 0) {
       playVictoryChime();
@@ -1486,42 +1584,59 @@ function addHistoryBadge(num, color) {
   tray.insertBefore(chip, tray.children[1] || null);
 }
 
-function addLedgerRow(user, wager, mult, payout, isWin) {
+let ledgerTab = 'live', liveWins = [], sessionBets = [], savedBets = [];
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const COIN = '<span class="br-coin" style="display:inline-flex; width:11px; height:11px; font-size:6px;">Br</span>';
+
+function renderLedger() {
   const tbody = document.getElementById('ledgerBody');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${user}</td>
-    <td>${Number(wager).toFixed(1)} <span class="br-coin" style="display:inline-flex; width:11px; height:11px; font-size:6px;">Br</span></td>
-    <td>${(mult || 0).toFixed(2)} x</td>
-    <td class="${isWin ? 'col-payout-win' : ''}">${Number(payout).toFixed(2)} <span class="br-coin" style="display:inline-flex; width:11px; height:11px; font-size:6px;">Br</span></td>
-  `;
-  tbody.insertBefore(tr, tbody.firstChild);
+  const rows = ledgerTab === 'live' ? liveWins.map(w => ({ user: w.user, wager: w.win / (w.mult || 1), mult: w.mult || 0, payout: w.win, isWin: true }))
+    : ledgerTab === 'myBets' ? sessionBets : savedBets;
+  tbody.innerHTML = rows.length ? rows.map(r => `<tr><td>${esc(r.user)}</td><td>${Number(r.wager).toFixed(1)} ${COIN}</td><td>${Number(r.mult || 0).toFixed(2)} x</td><td class="${r.isWin ? 'col-payout-win' : ''}">${Number(r.payout).toFixed(2)} ${COIN}</td></tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;opacity:.6;padding:14px">' + (ledgerTab === 'live' ? 'No big wins yet' : 'No bets yet') + '</td></tr>';
 }
+
+function addLedgerRow(user, wager, mult, payout, isWin) {
+  const row = { user, wager, mult, payout, isWin, t: Date.now() };
+  sessionBets.unshift(row);
+  savedBets.unshift(row);
+  savedBets = savedBets.slice(0, 100);
+  try { if (USER_ID) localStorage.setItem('hulu_roulette_v2_' + USER_ID, JSON.stringify(savedBets)); } catch (e) {}
+  renderLedger();
+}
+
+function loadMyHistory() {
+  try {
+    const a = JSON.parse(localStorage.getItem('hulu_roulette_v2_' + USER_ID) || '[]');
+    savedBets = Array.isArray(a) ? a : [];
+  } catch (e) { savedBets = []; }
+  renderLedger();
+}
+
+async function loadLiveFeed() {
+  const d = await api('/api/public/feed?game=JetX');
+  if (d && d.success) {
+    liveWins = d.wins || [];
+    renderLedger();
+  }
+}
+setInterval(() => { if (ledgerTab === 'live') loadLiveFeed(); }, 15000);
 
 // Tab Switching
 function selectTab(tab) {
+  ledgerTab = tab;
   document.getElementById('tabLive').classList.toggle('active', tab === 'live');
   document.getElementById('tabMyBets').classList.toggle('active', tab === 'myBets');
   document.getElementById('tabAllTime').classList.toggle('active', tab === 'allTime');
-}
-
-// Seed mock live activity (for atmosphere matching screenshot)
-function seedInitialFeed() {
-  const users = ['w***d', 'w***d', 'u***a', 'u***a', 'u***a', 'p***f', 'u***k', 'p***f'];
-  const wagers = [25.0, 25.0, 5.0, 10.0, 10.0, 5.0, 2.0, 5.0];
-  const mults = [2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 36.00, 2.00];
-  const payouts = [50.0, 50.0, 10.0, 20.0, 20.0, 10.0, 72.0, 10.0];
-
-  for (let i = 0; i < users.length; i++) {
-    addLedgerRow(users[i], wagers[i], mults[i], payouts[i], true);
-  }
+  renderLedger();
 }
 
 // Lifecycle Init
 window.addEventListener('DOMContentLoaded', () => {
   buildBoardGrid();
   syncStakeUI();
-  seedInitialFeed();
+  renderLedger();
+  loadLiveFeed();
 
   // Show Gate modal if opened outside Telegram iframe
   if (window.self === window.top) {
